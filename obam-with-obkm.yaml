@@ -1380,14 +1380,14 @@ Outputs:
           - DNSName
         - ':8280'
     Description: OB HTTP Gateway endpoint
-  APIM_HOSTNAME:
+  ApimHostname:
     Value: !Join
       - ''
       - - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
     Description: OB APIM Hostname
-  KM_HOSTNAME:
+  KmHostname:
     Value: !Join
       - ''
       - - !GetAtt

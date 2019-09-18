@@ -1380,6 +1380,20 @@ Outputs:
           - DNSName
         - ':8280'
     Description: OB HTTP Gateway endpoint
+  APIM_HOSTNAME:
+    Value: !Join
+      - ''
+      - - !GetAtt
+          - WSO2OBLoadBalancer
+          - DNSName
+    Description: OB APIM Hostname
+  KM_HOSTNAME:
+    Value: !Join
+      - ''
+      - - !GetAtt
+          - WSO2OBLoadBalancer
+          - DNSName
+    Description: OB KM Hostname
 Mappings:
   WSO2PuppetMasterRegionMap:
     ap-southeast-2:

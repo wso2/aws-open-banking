@@ -880,6 +880,7 @@ Resources:
       TargetGroupARNs:
         - !Ref WSO2OBALBTargetGroup
         - !Ref WSO2OBALB8243TargetGroup
+        - !Ref WSO2OBKMALB9763TargetGroup
       VPCZoneIdentifier:
         - !Ref WSO2OBPrivateSubnet1
       Tags:

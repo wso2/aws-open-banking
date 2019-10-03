@@ -1205,7 +1205,7 @@ Resources:
       Matcher:
         HttpCode: 200
       Name: ob-carbon-9763
-      Port: 9446
+      Port: 9763
       Protocol: HTTP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds

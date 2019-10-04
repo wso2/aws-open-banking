@@ -1401,7 +1401,7 @@ Mappings:
     eu-west-1:
        Ubuntu1804: ami-01ede9cf5682c13eb
     us-east-1:
-       Ubuntu1804: ami-087017fc14045c203
+       Ubuntu1804: ami-04dcdcb1e9e5e1fcd
     us-east-2:
        Ubuntu1804: ami-0032cc13f9a978562
     us-west-1:

@@ -376,7 +376,7 @@ Resources:
         - IpProtocol: tcp
           FromPort: '9763'
           ToPort: '9763'
-          CidrIp: 0.0.0.0/0
+          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '9443'
           ToPort: '9443'
@@ -880,7 +880,6 @@ Resources:
       TargetGroupARNs:
         - !Ref WSO2OBALBTargetGroup
         - !Ref WSO2OBALB8243TargetGroup
-        - !Ref WSO2OBKMALB9763TargetGroup
       VPCZoneIdentifier:
         - !Ref WSO2OBPrivateSubnet1
       Tags:
@@ -1194,31 +1193,6 @@ Resources:
       Tags:
       - Key: Name
         Value: ob
-  WSO2OBKMALB9763TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    Properties:
-      HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: HTTP
-      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 4
-      HealthCheckPath: /
-      HealthCheckPort: 9763
-      Matcher:
-        HttpCode: 200
-      Name: ob-carbon-9763
-      Port: 9763
-      Protocol: HTTP
-      TargetGroupAttributes:
-      - Key: deregistration_delay.timeout_seconds
-        Value: '20'
-      - Key: stickiness.enabled
-        Value: 'true'
-      UnhealthyThresholdCount: 3
-      VpcId:
-        Ref: WSO2OBVPC
-      Tags:
-      - Key: Name
-        Value: ob
   WSO2OBALB8243TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -1302,17 +1276,6 @@ Resources:
       Port: 8243
       Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
-  WSO2OBALB9763Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
-    Properties:
-      DefaultActions:
-        - Type: forward
-          TargetGroupArn: !Ref WSO2OBKMALB9763TargetGroup
-      LoadBalancerArn: !Ref WSO2OBLoadBalancer
-      Port: 9763
-      Protocol: HTTP
     DependsOn:
       - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9443Listener:
@@ -1438,7 +1401,7 @@ Mappings:
     eu-west-1:
        Ubuntu1804: ami-01ede9cf5682c13eb
     us-east-1:
-       Ubuntu1804: ami-04dcdcb1e9e5e1fcd
+       Ubuntu1804: ami-087017fc14045c203
     us-east-2:
        Ubuntu1804: ami-0032cc13f9a978562
     us-west-1:

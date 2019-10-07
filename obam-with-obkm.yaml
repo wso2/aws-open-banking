@@ -894,14 +894,14 @@ Resources:
       ResourceSignal:
         Count: 1
         Timeout: PT30M
-    UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MaxBatchSize: '2'
-        MinInstancesInService: '1'
-        PauseTime: PT10M
-        SuspendProcesses:
-          - AlarmNotification
-        WaitOnResourceSignals: true
+#     UpdatePolicy:
+#       AutoScalingRollingUpdate:
+#         MaxBatchSize: '2'
+#         MinInstancesInService: '1'
+#         PauseTime: PT10M
+#         SuspendProcesses:
+#           - AlarmNotification
+#         WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####

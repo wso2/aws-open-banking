@@ -1144,8 +1144,8 @@ Resources:
       Subnets:
         - !Ref WSO2OBPublicSubnet1
         - !Ref WSO2OBPublicSubnet2
-      SecurityGroups:
-        - !Ref WSO2OBLoadBalancerSecurityGroup
+#      SecurityGroups:
+#        - !Ref WSO2OBLoadBalancerSecurityGroup
   WSO2OBALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:

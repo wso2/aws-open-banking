@@ -1138,6 +1138,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: OB
+      Type: network
+      IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1

@@ -1138,6 +1138,8 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: OB
+      Type: network
+      IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
@@ -1290,14 +1292,14 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALB8243TargetGroup
-      Certificates:
-        - CertificateArn: !Join
-          - ''
-          - - 'arn:aws:iam::'
-            - !Ref 'AWS::AccountId'
-            - ':server-certificate'
-            - /
-            - !Ref CertificateName
+#      Certificates:
+#        - CertificateArn: !Join
+#          - ''
+#          - - 'arn:aws:iam::'
+#            - !Ref 'AWS::AccountId'
+#            - ':server-certificate'
+#            - /
+#            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
       Protocol: HTTPS

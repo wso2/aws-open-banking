@@ -890,18 +890,18 @@ Resources:
         - Key: cluster
           Value: ob
           PropagateAtLaunch: 'true'
-    CreationPolicy:
-      ResourceSignal:
-        Count: 1
-        Timeout: PT30M
-    UpdatePolicy:
-      AutoScalingRollingUpdate:
-        MaxBatchSize: '2'
-        MinInstancesInService: '1'
-        PauseTime: PT10M
-        SuspendProcesses:
-          - AlarmNotification
-        WaitOnResourceSignals: true
+#     CreationPolicy:
+#       ResourceSignal:
+#         Count: 1
+#         Timeout: PT30M
+#     UpdatePolicy:
+#       AutoScalingRollingUpdate:
+#         MaxBatchSize: '2'
+#         MinInstancesInService: '1'
+#         PauseTime: PT10M
+#         SuspendProcesses:
+#           - AlarmNotification
+#         WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####
@@ -1438,7 +1438,7 @@ Mappings:
     eu-west-1:
        Ubuntu1804: ami-01ede9cf5682c13eb
     us-east-1:
-       Ubuntu1804: ami-04dcdcb1e9e5e1fcd
+       Ubuntu1804: ami-0e5d116481be567e6
     us-east-2:
        Ubuntu1804: ami-0032cc13f9a978562
     us-west-1:

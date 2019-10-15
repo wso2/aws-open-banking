@@ -1263,7 +1263,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
       Protocol: TCP
-      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
+#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9446Listener:
@@ -1283,7 +1283,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
       Protocol: TCP
-      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
+#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB8243Listener:
@@ -1303,7 +1303,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
       Protocol: TCP
-      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
+#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9763Listener:
@@ -1334,7 +1334,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
       Protocol: TCP
-      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
+#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
 Outputs:

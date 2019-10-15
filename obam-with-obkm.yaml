@@ -1153,7 +1153,7 @@ Resources:
       HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-      HealthCheckPath: /carbon/admin/login.jsp
+#      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9443
 #      Matcher:
 #        HttpCode: 200
@@ -1178,7 +1178,7 @@ Resources:
       HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-      HealthCheckPath: /carbon/admin/login.jsp
+#      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9446
 #      Matcher:
 #        HttpCode: 200
@@ -1203,7 +1203,7 @@ Resources:
       HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-      HealthCheckPath: /
+#      HealthCheckPath: /
       HealthCheckPort: 9763
 #      Matcher:
 #        HttpCode: 200
@@ -1228,7 +1228,7 @@ Resources:
       HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-      HealthCheckPath: /services/Version
+#      HealthCheckPath: /services/Version
       HealthCheckPort: 8243
 #      Matcher:
 #        HttpCode: 200

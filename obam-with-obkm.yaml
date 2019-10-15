@@ -1160,11 +1160,11 @@ Resources:
       Name: ob-carbon-9443
       Port: 9443
       Protocol: TCP
-      TargetGroupAttributes:
-      - Key: deregistration_delay.timeout_seconds
-        Value: '20'
-      - Key: stickiness.enabled
-        Value: 'true'
+#      TargetGroupAttributes:
+#      - Key: deregistration_delay.timeout_seconds
+#        Value: '20'
+#      - Key: stickiness.enabled
+#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1185,11 +1185,11 @@ Resources:
       Name: ob-carbon-9446
       Port: 9446
       Protocol: TCP
-      TargetGroupAttributes:
-      - Key: deregistration_delay.timeout_seconds
-        Value: '20'
-      - Key: stickiness.enabled
-        Value: 'true'
+#      TargetGroupAttributes:
+#      - Key: deregistration_delay.timeout_seconds
+#        Value: '20'
+#      - Key: stickiness.enabled
+#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1210,11 +1210,11 @@ Resources:
       Name: ob-carbon-9763
       Port: 9763
       Protocol: TCP
-      TargetGroupAttributes:
-      - Key: deregistration_delay.timeout_seconds
-        Value: '20'
-      - Key: stickiness.enabled
-        Value: 'true'
+#      TargetGroupAttributes:
+#      - Key: deregistration_delay.timeout_seconds
+#        Value: '20'
+#      - Key: stickiness.enabled
+#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1235,11 +1235,11 @@ Resources:
       Name: ob-carbon-8243
       Port: 8243
       Protocol: TCP
-      TargetGroupAttributes:
-      - Key: deregistration_delay.timeout_seconds
-        Value: '20'
-      - Key: stickiness.enabled
-        Value: 'true'
+#      TargetGroupAttributes:
+#      - Key: deregistration_delay.timeout_seconds
+#        Value: '20'
+#      - Key: stickiness.enabled
+#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC

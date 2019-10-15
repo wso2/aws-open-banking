@@ -1138,33 +1138,31 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: OB
-      Type: network
-      IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
         - !Ref WSO2OBPublicSubnet2
-#      SecurityGroups:
-#        - !Ref WSO2OBLoadBalancerSecurityGroup
+      SecurityGroups:
+        - !Ref WSO2OBLoadBalancerSecurityGroup
   WSO2OBALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: TCP
+      HealthCheckProtocol: HTTPS
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-#      HealthCheckPath: /carbon/admin/login.jsp
-      HealthCheckPort: traffic-port
-#      Matcher:
-#        HttpCode: 200
+      HealthCheckPath: /carbon/admin/login.jsp
+      HealthCheckPort: 9443
+      Matcher:
+        HttpCode: 200
       Name: ob-carbon-9443
       Port: 9443
-      Protocol: TCP
-#      TargetGroupAttributes:
-#      - Key: deregistration_delay.timeout_seconds
-#        Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
+      Protocol: HTTPS
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '20'
+      - Key: stickiness.enabled
+        Value: 'true'
       UnhealthyThresholdCount: 3
       VpcId:
         Ref: WSO2OBVPC
@@ -1175,21 +1173,21 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: TCP
+      HealthCheckProtocol: HTTPS
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-#      HealthCheckPath: /carbon/admin/login.jsp
-      HealthCheckPort: traffic-port
-#      Matcher:
-#        HttpCode: 200
+      HealthCheckPath: /carbon/admin/login.jsp
+      HealthCheckPort: 9446
+      Matcher:
+        HttpCode: 200
       Name: ob-carbon-9446
       Port: 9446
-      Protocol: TCP
-#      TargetGroupAttributes:
-#      - Key: deregistration_delay.timeout_seconds
-#        Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
+      Protocol: HTTPS
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '20'
+      - Key: stickiness.enabled
+        Value: 'true'
       UnhealthyThresholdCount: 3
       VpcId:
         Ref: WSO2OBVPC
@@ -1200,21 +1198,21 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: TCP
+      HealthCheckProtocol: HTTP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-#      HealthCheckPath: /
-      HealthCheckPort: traffic-port
-#      Matcher:
-#        HttpCode: 200
+      HealthCheckPath: /
+      HealthCheckPort: 9763
+      Matcher:
+        HttpCode: 200
       Name: ob-carbon-9763
       Port: 9763
-      Protocol: TCP
-#      TargetGroupAttributes:
-#      - Key: deregistration_delay.timeout_seconds
-#        Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
+      Protocol: HTTP
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '20'
+      - Key: stickiness.enabled
+        Value: 'true'
       UnhealthyThresholdCount: 3
       VpcId:
         Ref: WSO2OBVPC
@@ -1225,21 +1223,21 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: TCP
+      HealthCheckProtocol: HTTPS
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
-#      HealthCheckPath: /services/Version
-      HealthCheckPort: traffic-port
-#      Matcher:
-#        HttpCode: 200
+      HealthCheckPath: /services/Version
+      HealthCheckPort: 8243
+      Matcher:
+        HttpCode: 200
       Name: ob-carbon-8243
       Port: 8243
-      Protocol: TCP
-#      TargetGroupAttributes:
-#      - Key: deregistration_delay.timeout_seconds
-#        Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
+      Protocol: HTTPS
+      TargetGroupAttributes:
+      - Key: deregistration_delay.timeout_seconds
+        Value: '20'
+      - Key: stickiness.enabled
+        Value: 'true'
       UnhealthyThresholdCount: 3
       VpcId:
         Ref: WSO2OBVPC
@@ -1253,7 +1251,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
       Certificates:
-        CertificateArn: !Join
+        - CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'
@@ -1262,10 +1260,10 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
-      Protocol: TCP
+      Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
+    DependsOn:
+      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9446Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1273,7 +1271,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBKMALBTargetGroup
       Certificates:
-        CertificateArn: !Join
+        - CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'
@@ -1282,30 +1280,30 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
-      Protocol: TCP
+      Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
+    DependsOn:
+      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB8243Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALB8243TargetGroup
-#      Certificates:
-#        CertificateArn: !Join
-#          - ''
-#          - - 'arn:aws:iam::'
-#            - !Ref 'AWS::AccountId'
-#            - ':server-certificate'
-#            - /
-#            - !Ref CertificateName
+      Certificates:
+        - CertificateArn: !Join
+          - ''
+          - - 'arn:aws:iam::'
+            - !Ref 'AWS::AccountId'
+            - ':server-certificate'
+            - /
+            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
-      Protocol: TCP
+      Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
+    DependsOn:
+      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9763Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1314,9 +1312,9 @@ Resources:
           TargetGroupArn: !Ref WSO2OBKMALB9763TargetGroup
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9763
-      Protocol: TCP
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
+      Protocol: HTTP
+    DependsOn:
+      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9443Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1324,7 +1322,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
       Certificates:
-        CertificateArn: !Join
+        - CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'
@@ -1333,10 +1331,10 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
-      Protocol: TCP
+      Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
+    DependsOn:
+      - WSO2OBLoadBalancerSecurityGroup
 Outputs:
   CarbonServerUrl:
     Value: !Join

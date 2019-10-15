@@ -1252,14 +1252,14 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
-      Certificates:
-        - CertificateArn: !Join
-          - ''
-          - - 'arn:aws:iam::'
-            - !Ref 'AWS::AccountId'
-            - ':server-certificate'
-            - /
-            - !Ref CertificateName
+#      Certificates:
+#        - CertificateArn: !Join
+#          - ''
+#          - - 'arn:aws:iam::'
+#            - !Ref 'AWS::AccountId'
+#            - ':server-certificate'
+#            - /
+#            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
       Protocol: TCP
@@ -1272,14 +1272,14 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBKMALBTargetGroup
-      Certificates:
-        - CertificateArn: !Join
-          - ''
-          - - 'arn:aws:iam::'
-            - !Ref 'AWS::AccountId'
-            - ':server-certificate'
-            - /
-            - !Ref CertificateName
+#      Certificates:
+#        - CertificateArn: !Join
+#          - ''
+#          - - 'arn:aws:iam::'
+#            - !Ref 'AWS::AccountId'
+#            - ':server-certificate'
+#            - /
+#            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
       Protocol: TCP
@@ -1292,14 +1292,14 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALB8243TargetGroup
-      Certificates:
-        - CertificateArn: !Join
-          - ''
-          - - 'arn:aws:iam::'
-            - !Ref 'AWS::AccountId'
-            - ':server-certificate'
-            - /
-            - !Ref CertificateName
+#      Certificates:
+#        - CertificateArn: !Join
+#          - ''
+#          - - 'arn:aws:iam::'
+#            - !Ref 'AWS::AccountId'
+#            - ':server-certificate'
+#            - /
+#            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
       Protocol: TCP
@@ -1323,14 +1323,14 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
-      Certificates:
-        - CertificateArn: !Join
-          - ''
-          - - 'arn:aws:iam::'
-            - !Ref 'AWS::AccountId'
-            - ':server-certificate'
-            - /
-            - !Ref CertificateName
+#      Certificates:
+#        - CertificateArn: !Join
+#          - ''
+#          - - 'arn:aws:iam::'
+#            - !Ref 'AWS::AccountId'
+#            - ':server-certificate'
+#            - /
+#            - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
       Protocol: TCP

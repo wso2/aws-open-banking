@@ -1253,7 +1253,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
       Certificates:
-        - CertificateArn: !Join
+        CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'
@@ -1273,7 +1273,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBKMALBTargetGroup
       Certificates:
-        - CertificateArn: !Join
+        CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'
@@ -1293,7 +1293,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALB8243TargetGroup
 #      Certificates:
-#        - CertificateArn: !Join
+#        CertificateArn: !Join
 #          - ''
 #          - - 'arn:aws:iam::'
 #            - !Ref 'AWS::AccountId'
@@ -1324,7 +1324,7 @@ Resources:
         - Type: forward
           TargetGroupArn: !Ref WSO2OBALBTargetGroup
       Certificates:
-        - CertificateArn: !Join
+        CertificateArn: !Join
           - ''
           - - 'arn:aws:iam::'
             - !Ref 'AWS::AccountId'

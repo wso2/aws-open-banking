@@ -1138,12 +1138,14 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Name: OB
+      Type: network
+      IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
         - !Ref WSO2OBPublicSubnet2
-      SecurityGroups:
-        - !Ref WSO2OBLoadBalancerSecurityGroup
+ #     SecurityGroups:
+ #       - !Ref WSO2OBLoadBalancerSecurityGroup
   WSO2OBALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
@@ -1262,8 +1264,8 @@ Resources:
       Port: 443
       Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
+#    DependsOn:
+#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9446Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1282,8 +1284,8 @@ Resources:
       Port: 9446
       Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
+#    DependsOn:
+#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB8243Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1302,8 +1304,8 @@ Resources:
       Port: 8243
       Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
+#    DependsOn:
+#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9763Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1313,8 +1315,8 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9763
       Protocol: HTTP
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
+#    DependsOn:
+#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9443Listener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
@@ -1333,8 +1335,8 @@ Resources:
       Port: 9443
       Protocol: HTTPS
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-    DependsOn:
-      - WSO2OBLoadBalancerSecurityGroup
+#    DependsOn:
+#      - WSO2OBLoadBalancerSecurityGroup
 Outputs:
   CarbonServerUrl:
     Value: !Join

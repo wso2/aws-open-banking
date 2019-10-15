@@ -1151,7 +1151,7 @@ Resources:
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-      HealthCheckTimeoutSeconds: 5
+#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
 #      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9443
@@ -1176,7 +1176,7 @@ Resources:
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-      HealthCheckTimeoutSeconds: 5
+#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
 #      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9446
@@ -1201,7 +1201,7 @@ Resources:
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-      HealthCheckTimeoutSeconds: 5
+#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
 #      HealthCheckPath: /
       HealthCheckPort: 9763
@@ -1226,7 +1226,7 @@ Resources:
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-      HealthCheckTimeoutSeconds: 5
+#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
 #      HealthCheckPath: /services/Version
       HealthCheckPort: 8243

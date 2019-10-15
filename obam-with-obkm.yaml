@@ -1152,7 +1152,7 @@ Resources:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
 #      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 4
+      HealthyThresholdCount: 2
 #      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9443
 #      Matcher:
@@ -1165,7 +1165,7 @@ Resources:
         Value: '20'
       - Key: stickiness.enabled
         Value: 'true'
-      UnhealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
       Tags:
@@ -1177,7 +1177,7 @@ Resources:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
 #      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 4
+      HealthyThresholdCount: 2
 #      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9446
 #      Matcher:
@@ -1190,7 +1190,7 @@ Resources:
         Value: '20'
       - Key: stickiness.enabled
         Value: 'true'
-      UnhealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
       Tags:
@@ -1202,7 +1202,7 @@ Resources:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
 #      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 4
+      HealthyThresholdCount: 2
 #      HealthCheckPath: /
       HealthCheckPort: 9763
 #      Matcher:
@@ -1215,7 +1215,7 @@ Resources:
         Value: '20'
       - Key: stickiness.enabled
         Value: 'true'
-      UnhealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
       Tags:
@@ -1227,7 +1227,7 @@ Resources:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
 #      HealthCheckTimeoutSeconds: 5
-      HealthyThresholdCount: 4
+      HealthyThresholdCount: 2
 #      HealthCheckPath: /services/Version
       HealthCheckPort: 8243
 #      Matcher:
@@ -1240,7 +1240,7 @@ Resources:
         Value: '20'
       - Key: stickiness.enabled
         Value: 'true'
-      UnhealthyThresholdCount: 3
+      UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
       Tags:

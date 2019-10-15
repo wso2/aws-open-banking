@@ -1150,7 +1150,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: HTTPS
+      HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
       HealthCheckPath: /carbon/admin/login.jsp
@@ -1159,7 +1159,7 @@ Resources:
         HttpCode: 200
       Name: ob-carbon-9443
       Port: 9443
-      Protocol: HTTPS
+      Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
@@ -1175,7 +1175,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: HTTPS
+      HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
       HealthCheckPath: /carbon/admin/login.jsp
@@ -1184,7 +1184,7 @@ Resources:
         HttpCode: 200
       Name: ob-carbon-9446
       Port: 9446
-      Protocol: HTTPS
+      Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
@@ -1200,7 +1200,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: HTTP
+      HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
       HealthCheckPath: /
@@ -1209,7 +1209,7 @@ Resources:
         HttpCode: 200
       Name: ob-carbon-9763
       Port: 9763
-      Protocol: HTTP
+      Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
@@ -1225,7 +1225,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckIntervalSeconds: 10
-      HealthCheckProtocol: HTTPS
+      HealthCheckProtocol: TCP
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 4
       HealthCheckPath: /services/Version
@@ -1234,7 +1234,7 @@ Resources:
         HttpCode: 200
       Name: ob-carbon-8243
       Port: 8243
-      Protocol: HTTPS
+      Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
@@ -1262,7 +1262,7 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
-      Protocol: HTTPS
+      Protocol: TCP
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
@@ -1282,7 +1282,7 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
-      Protocol: HTTPS
+      Protocol: TCP
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
@@ -1302,7 +1302,7 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
-      Protocol: HTTPS
+      Protocol: TCP
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
@@ -1314,7 +1314,7 @@ Resources:
           TargetGroupArn: !Ref WSO2OBKMALB9763TargetGroup
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9763
-      Protocol: HTTP
+      Protocol: TCP
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9443Listener:
@@ -1333,7 +1333,7 @@ Resources:
             - !Ref CertificateName
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
-      Protocol: HTTPS
+      Protocol: TCP
       SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
 #    DependsOn:
 #      - WSO2OBLoadBalancerSecurityGroup

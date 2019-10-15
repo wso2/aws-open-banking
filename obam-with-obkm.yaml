@@ -1155,8 +1155,8 @@ Resources:
       HealthyThresholdCount: 4
       HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9443
-      Matcher:
-        HttpCode: 200
+#      Matcher:
+#        HttpCode: 200
       Name: ob-carbon-9443
       Port: 9443
       Protocol: TCP
@@ -1180,8 +1180,8 @@ Resources:
       HealthyThresholdCount: 4
       HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9446
-      Matcher:
-        HttpCode: 200
+#      Matcher:
+#        HttpCode: 200
       Name: ob-carbon-9446
       Port: 9446
       Protocol: TCP
@@ -1205,8 +1205,8 @@ Resources:
       HealthyThresholdCount: 4
       HealthCheckPath: /
       HealthCheckPort: 9763
-      Matcher:
-        HttpCode: 200
+#      Matcher:
+#        HttpCode: 200
       Name: ob-carbon-9763
       Port: 9763
       Protocol: TCP
@@ -1230,8 +1230,8 @@ Resources:
       HealthyThresholdCount: 4
       HealthCheckPath: /services/Version
       HealthCheckPort: 8243
-      Matcher:
-        HttpCode: 200
+#      Matcher:
+#        HttpCode: 200
       Name: ob-carbon-8243
       Port: 8243
       Protocol: TCP

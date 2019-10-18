@@ -207,14 +207,14 @@ Resources:
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-  WSO2OBPublicSubnet2:
-      Type: 'AWS::EC2::Subnet'
-      Properties:
-        VpcId: !Ref WSO2OBVPC
-        CidrBlock: 10.0.252.0/24
-        AvailabilityZone: !Select
-          - '1'
-          - !GetAZs ''
+#  WSO2OBPublicSubnet2:
+#      Type: 'AWS::EC2::Subnet'
+#      Properties:
+#        VpcId: !Ref WSO2OBVPC
+#        CidrBlock: 10.0.252.0/24
+#        AvailabilityZone: !Select
+#          - '1'
+#          - !GetAZs ''
   WSO2OBPublicInternetGateway:
     Type: 'AWS::EC2::InternetGateway'
   WSO2OBPublicRouteTable:
@@ -226,11 +226,11 @@ Resources:
     Properties:
       RouteTableId: !Ref WSO2OBPublicRouteTable
       SubnetId: !Ref WSO2OBPublicSubnet1
-  WSO2OBPublicSubnet2RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref WSO2OBPublicRouteTable
-      SubnetId: !Ref WSO2OBPublicSubnet2
+#  WSO2OBPublicSubnet2RouteTableAssociation:
+#    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+#    Properties:
+#      RouteTableId: !Ref WSO2OBPublicRouteTable
+#      SubnetId: !Ref WSO2OBPublicSubnet2
   WSO2OBPublicRoute:
     Type: 'AWS::EC2::Route'
     Properties:
@@ -251,14 +251,14 @@ Resources:
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-  WSO2OBPrivateSubnet2:
-    Type: 'AWS::EC2::Subnet'
-    Properties:
-      VpcId: !Ref WSO2OBVPC
-      CidrBlock: 10.0.2.0/24
-      AvailabilityZone: !Select
-        - '1'
-        - !GetAZs ''
+#  WSO2OBPrivateSubnet2:
+#    Type: 'AWS::EC2::Subnet'
+#    Properties:
+#      VpcId: !Ref WSO2OBVPC
+#      CidrBlock: 10.0.2.0/24
+#      AvailabilityZone: !Select
+#        - '1'
+#        - !GetAZs ''
   WSO2OBPrivateSubnetRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -274,11 +274,11 @@ Resources:
     Properties:
       RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
       SubnetId: !Ref WSO2OBPrivateSubnet1
-  WSO2OBPrivateSubnet2RouteTableAssociation:
-    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-    Properties:
-      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
-      SubnetId: !Ref WSO2OBPrivateSubnet2
+#  WSO2OBPrivateSubnet2RouteTableAssociation:
+#    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+#    Properties:
+#      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
+#      SubnetId: !Ref WSO2OBPrivateSubnet2
   WSO2OBNATGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
@@ -347,8 +347,8 @@ Resources:
       DBSubnetGroupDescription: DB Subnet Group
       SubnetIds:
         - !Ref WSO2OBPrivateSubnet1
-        - !Ref WSO2OBPrivateSubnet2
-  # Product configurations
+#        - !Ref WSO2OBPrivateSubnet2
+#   Product configurations
   BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
@@ -1052,7 +1052,7 @@ Resources:
       TargetGroupARNs:
         - !Ref WSO2OBKMALBTargetGroup
       VPCZoneIdentifier:
-        - !Ref WSO2OBPrivateSubnet2
+        - !Ref WSO2OBPrivateSubnet1
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-OBInstance2"
@@ -1143,12 +1143,12 @@ Resources:
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
-        - !Ref WSO2OBPublicSubnet2
-      LoadBalancerAttributes:
-        - Key: load_balancing.cross_zone.enabled
-          Value: 'true'
- #     SecurityGroups:
- #       - !Ref WSO2OBLoadBalancerSecurityGroup
+#        - !Ref WSO2OBPublicSubnet2
+#      LoadBalancerAttributes:
+#        - Key: load_balancing.cross_zone.enabled
+#          Value: 'true'
+#      SecurityGroups:
+#        - !Ref WSO2OBLoadBalancerSecurityGroup
   WSO2OBALBTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:

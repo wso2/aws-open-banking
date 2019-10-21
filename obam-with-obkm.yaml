@@ -251,14 +251,14 @@ Resources:
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-#  WSO2OBPrivateSubnet2:
-#    Type: 'AWS::EC2::Subnet'
-#    Properties:
-#      VpcId: !Ref WSO2OBVPC
-#      CidrBlock: 10.0.2.0/24
-#      AvailabilityZone: !Select
-#        - '1'
-#        - !GetAZs ''
+  WSO2OBPrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref WSO2OBVPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select
+        - '1'
+        - !GetAZs ''
   WSO2OBPrivateSubnetRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
@@ -274,11 +274,11 @@ Resources:
     Properties:
       RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
       SubnetId: !Ref WSO2OBPrivateSubnet1
-#  WSO2OBPrivateSubnet2RouteTableAssociation:
-#    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-#    Properties:
-#      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
-#      SubnetId: !Ref WSO2OBPrivateSubnet2
+  WSO2OBPrivateSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
+      SubnetId: !Ref WSO2OBPrivateSubnet2
   WSO2OBNATGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
@@ -347,7 +347,7 @@ Resources:
       DBSubnetGroupDescription: DB Subnet Group
       SubnetIds:
         - !Ref WSO2OBPrivateSubnet1
-#        - !Ref WSO2OBPrivateSubnet2
+        - !Ref WSO2OBPrivateSubnet2
 #   Product configurations
   BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'

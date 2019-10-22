@@ -372,7 +372,8 @@ Resources:
         - IpProtocol: tcp
           FromPort: '8280'
           ToPort: '8280'
-          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
+          CidrIp: 0.0.0.0/0
+#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '9763'
           ToPort: '9763'
@@ -388,11 +389,13 @@ Resources:
         - IpProtocol: tcp
           FromPort: '8243'
           ToPort: '8243'
-          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
+          CidrIp: 0.0.0.0/0
+#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '5672'
           ToPort: '5672'
-          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
+          CidrIp: 0.0.0.0/0
+#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '8140'
           ToPort: '8140'

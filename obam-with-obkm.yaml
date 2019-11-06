@@ -788,18 +788,6 @@ Resources:
         - Key: cluster
           Value: ob
           PropagateAtLaunch: 'true'
-#     CreationPolicy:
-#       ResourceSignal:
-#         Count: 1
-#         Timeout: PT30M
-#     UpdatePolicy:
-#       AutoScalingRollingUpdate:
-#         MaxBatchSize: '2'
-#         MinInstancesInService: '1'
-#         PauseTime: PT10M
-#         SuspendProcesses:
-#           - AlarmNotification
-#         WaitOnResourceSignals: true
     DependsOn:
       - WSO2OB140LoadBalancer
 ##### KEY MANAGER NODE #####

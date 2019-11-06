@@ -193,96 +193,96 @@ Parameters:
       - "UK"
 Resources:
   # networking configurations
-  WSO2OB140VPC:
+  WSO2OBVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: 10.0.0.0/16
       EnableDnsSupport: true
       EnableDnsHostnames: true
-  WSO2OB140PublicSubnet1:
+  WSO2OBPublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       CidrBlock: 10.0.254.0/24
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-  WSO2OB140PublicInternetGateway:
+  WSO2OBPublicInternetGateway:
     Type: 'AWS::EC2::InternetGateway'
-  WSO2OB140PublicRouteTable:
+  WSO2OBPublicRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
-  WSO2OB140PublicSubnet1RouteTableAssociation:
+      VpcId: !Ref WSO2OBVPC
+  WSO2OBPublicSubnet1RouteTableAssociation:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref WSO2OB140PublicRouteTable
-      SubnetId: !Ref WSO2OB140PublicSubnet1
-  WSO2OB140PublicRoute:
+      RouteTableId: !Ref WSO2OBPublicRouteTable
+      SubnetId: !Ref WSO2OBPublicSubnet1
+  WSO2OBPublicRoute:
     Type: 'AWS::EC2::Route'
     Properties:
-      RouteTableId: !Ref WSO2OB140PublicRouteTable
-      GatewayId: !Ref WSO2OB140PublicInternetGateway
+      RouteTableId: !Ref WSO2OBPublicRouteTable
+      GatewayId: !Ref WSO2OBPublicInternetGateway
       DestinationCidrBlock: 0.0.0.0/0
-    DependsOn: WSO2OB140VPCInternetGatewayAttachment
-  WSO2OB140VPCInternetGatewayAttachment:
+    DependsOn: WSO2OBVPCInternetGatewayAttachment
+  WSO2OBVPCInternetGatewayAttachment:
     Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
-      InternetGatewayId: !Ref WSO2OB140PublicInternetGateway
-      VpcId: !Ref WSO2OB140VPC
-  WSO2OB140PrivateSubnet1:
+      InternetGatewayId: !Ref WSO2OBPublicInternetGateway
+      VpcId: !Ref WSO2OBVPC
+  WSO2OBPrivateSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-  WSO2OB140PrivateSubnet2:
+  WSO2OBPrivateSubnet2:
     Type: 'AWS::EC2::Subnet'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: !Select
         - '1'
         - !GetAZs ''
-  WSO2OB140PrivateSubnetRouteTable:
+  WSO2OBPrivateSubnetRouteTable:
     Type: 'AWS::EC2::RouteTable'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
-  WSO2OB140PrivateRoute:
+      VpcId: !Ref WSO2OBVPC
+  WSO2OBPrivateRoute:
     Type: 'AWS::EC2::Route'
     Properties:
       DestinationCidrBlock: 0.0.0.0/0
-      NatGatewayId: !Ref WSO2OB140NATGateway
-      RouteTableId: !Ref WSO2OB140PrivateSubnetRouteTable
-  WSO2OB140PrivateSubnet1RouteTableAssociation:
+      NatGatewayId: !Ref WSO2OBNATGateway
+      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
+  WSO2OBPrivateSubnet1RouteTableAssociation:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref WSO2OB140PrivateSubnetRouteTable
-      SubnetId: !Ref WSO2OB140PrivateSubnet1
-  WSO2OB140PrivateSubnet2RouteTableAssociation:
+      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
+      SubnetId: !Ref WSO2OBPrivateSubnet1
+  WSO2OBPrivateSubnet2RouteTableAssociation:
     Type: 'AWS::EC2::SubnetRouteTableAssociation'
     Properties:
-      RouteTableId: !Ref WSO2OB140PrivateSubnetRouteTable
-      SubnetId: !Ref WSO2OB140PrivateSubnet2
-  WSO2OB140NATGateway:
+      RouteTableId: !Ref WSO2OBPrivateSubnetRouteTable
+      SubnetId: !Ref WSO2OBPrivateSubnet2
+  WSO2OBNATGateway:
     Type: 'AWS::EC2::NatGateway'
     Properties:
       AllocationId: !GetAtt
-        - WSO2OB140EIP
+        - WSO2OBEIP
         - AllocationId
-      SubnetId: !Ref WSO2OB140PublicSubnet1
-  WSO2OB140BastionEIPAssociation:
+      SubnetId: !Ref WSO2OBPublicSubnet1
+  WSO2OBBastionEIPAssociation:
     Type: 'AWS::EC2::EIPAssociation'
     Properties:
-      AllocationId: !GetAtt WSO2OB140BastionEIP.AllocationId
-      InstanceId: !Ref WSO2OB140BastionInstance
-  WSO2OB140EIP:
+      AllocationId: !GetAtt WSO2OBBastionEIP.AllocationId
+      InstanceId: !Ref WSO2OBBastionInstance
+  WSO2OBEIP:
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
-  WSO2OB140BastionEIP:
+  WSO2OBBastionEIP:
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
@@ -290,7 +290,7 @@ Resources:
   WSO2OB140DBInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       GroupDescription: DB Security Group
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -327,19 +327,19 @@ Resources:
       MasterUserPassword: !Ref DBPassword
       MultiAZ: 'false'
       StorageType: gp2
-      DBSubnetGroupName: !Ref WSO2OB140DBSubnetGroup
-  WSO2OB140DBSubnetGroup:
+      DBSubnetGroupName: !Ref WSO2OBDBSubnetGroup
+  WSO2OBDBSubnetGroup:
     Type: 'AWS::RDS::DBSubnetGroup'
     Properties:
       DBSubnetGroupDescription: DB Subnet Group
       SubnetIds:
-        - !Ref WSO2OB140PrivateSubnet1
-        - !Ref WSO2OB140PrivateSubnet2
+        - !Ref WSO2OBPrivateSubnet1
+        - !Ref WSO2OBPrivateSubnet2
 #   Product configurations
   WSO2OB140BastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       GroupDescription: WSO2 Open Banking Security Group
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -349,7 +349,7 @@ Resources:
   WSO2OB140SecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       GroupDescription: WSO2 Open Banking Security Group
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -388,13 +388,13 @@ Resources:
           FromPort: '4000'
           ToPort: '4000'
           CidrIp: 0.0.0.0/0
-  WSO2OB140BastionInstance:
+  WSO2OBBastionInstance:
     Type: 'AWS::EC2::Instance'
     Properties:
       DisableApiTermination: 'false'
       InstanceInitiatedShutdownBehavior: stop
       ImageId: !FindInMap
-        - WSO2OB140AMIRegionMap
+        - WSO2OBAMIRegionMap
         - !Ref 'AWS::Region'
         - Ubuntu1804
       InstanceType: t2.micro
@@ -402,15 +402,15 @@ Resources:
       Monitoring: 'false'
       Tags:
         - Key: Name
-          Value: WSO2OB140BastionInstance
+          Value: WSO2OBBastionInstance
       NetworkInterfaces:
         - DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: 0
-          SubnetId: !Ref WSO2OB140PublicSubnet1
+          SubnetId: !Ref WSO2OBPublicSubnet1
           GroupSet:
             - !Ref WSO2OB140BastionSecurityGroup
-  WSO2OB140PuppetMaster:
+  WSO2OBPuppetMaster:
     Type: 'AWS::EC2::Instance'
     CreationPolicy:
       ResourceSignal:
@@ -420,7 +420,7 @@ Resources:
       DisableApiTermination: 'false'
       InstanceInitiatedShutdownBehavior: stop
       ImageId: !FindInMap
-        - WSO2OB140PuppetMasterRegionMap
+        - WSO2OBPuppetMasterRegionMap
         - !Ref 'AWS::Region'
         - Ubuntu1804
       InstanceType: !Ref WSO2InstanceType
@@ -439,7 +439,7 @@ Resources:
         - DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: 0
-          SubnetId: !Ref WSO2OB140PrivateSubnet1
+          SubnetId: !Ref WSO2OBPrivateSubnet1
           GroupSet:
             - !Ref WSO2OB140PuppetMasterSecurityGroup
       UserData: !Base64
@@ -495,7 +495,7 @@ Resources:
             - service puppetmaster restart
             - !Sub "/home/ubuntu/wso2-init.sh '${WUMUsername}' '${WUMPassword}' wso2-obam-${ProductVersion} ${InternalPrepareForTest}"
             - !Sub "/home/ubuntu/wso2-init.sh '${WUMUsername}' '${WUMPassword}' wso2-obkm-${ProductVersion} ${InternalPrepareForTest}"
-            - !Sub "/usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140PuppetMaster --region ${AWS::Region}"
+            - !Sub "/usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBPuppetMaster --region ${AWS::Region}"
             - !Join
               - ''
               - - sed -i "s/CF_OBAM_HOSTNAME/
@@ -609,7 +609,7 @@ Resources:
   WSO2OB140PuppetMasterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
-      VpcId: !Ref WSO2OB140VPC
+      VpcId: !Ref WSO2OBVPC
       GroupDescription: WSO2 Open Banking Security Group
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -625,11 +625,11 @@ Resources:
           ToPort: 9200
           CidrIp: 0.0.0.0/0
 ##### APIM NODE #####
-  WSO2OB140Node1LaunchConfiguration:
+  WSO2OBNode1LaunchConfiguration:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       ImageId: !FindInMap
-        - WSO2OB140AMIRegionMap
+        - WSO2OBAMIRegionMap
         - !Ref 'AWS::Region'
         - !Ref OperatingSystem
       InstanceType: !Ref WSO2InstanceType
@@ -707,7 +707,7 @@ Resources:
           sed -i "s/STACK_NAME/${AWS::StackName}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           sed -i "s/REGION_NAME/${ElasticSearchRegion}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           nohup /usr/lib/logstash-6.5.1/bin/logstash -f /usr/lib/logstash-6.5.1/logstash-OB.conf &
-          export PuppetmasterIP=${WSO2OB140PuppetMaster.PrivateIp}
+          export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
           service puppet restart
           sleep 100
@@ -732,7 +732,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9443/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node1AutoScalingGroup --region ${AWS::Region}
+                      /usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode1AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -743,7 +743,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9443/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node1AutoScalingGroup --region ${AWS::Region}
+                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode1AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -754,7 +754,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9443/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node1AutoScalingGroup --region ${AWS::Region}
+                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode1AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -765,13 +765,13 @@ Resources:
     DependsOn:
       - WSO2OB140SecurityGroup
       - WSO2OB140LoadBalancer
-      - WSO2OB140VPCInternetGatewayAttachment
-      - WSO2OB140PuppetMaster
-      - WSO2OB140Node2AutoScalingGroup
-  WSO2OB140Node1AutoScalingGroup:
+      - WSO2OBVPCInternetGatewayAttachment
+      - WSO2OBPuppetMaster
+      - WSO2OBNode2AutoScalingGroup
+  WSO2OBNode1AutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
-      LaunchConfigurationName: !Ref WSO2OB140Node1LaunchConfiguration
+      LaunchConfigurationName: !Ref WSO2OBNode1LaunchConfiguration
       DesiredCapacity: 1
       MinSize: 1
       MaxSize: 1
@@ -780,7 +780,7 @@ Resources:
         - !Ref WSO2OB140ALB8243TargetGroup
         - !Ref WSO2OB140KMALB9763TargetGroup
       VPCZoneIdentifier:
-        - !Ref WSO2OB140PrivateSubnet1
+        - !Ref WSO2OBPrivateSubnet1
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-OBAM"
@@ -803,11 +803,11 @@ Resources:
     DependsOn:
       - WSO2OB140LoadBalancer
 ##### KEY MANAGER NODE #####
-  WSO2OB140Node2LaunchConfiguration:
+  WSO2OBNode2LaunchConfiguration:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
     Properties:
       ImageId: !FindInMap
-        - WSO2OB140AMIRegionMap
+        - WSO2OBAMIRegionMap
         - !Ref 'AWS::Region'
         - !Ref OperatingSystem
       InstanceType: !Ref WSO2InstanceType
@@ -880,7 +880,7 @@ Resources:
           sed -i "s/STACK_NAME/${AWS::StackName}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           sed -i "s/REGION_NAME/${ElasticSearchRegion}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           nohup /usr/lib/logstash-6.5.1/bin/logstash -f /usr/lib/logstash-6.5.1/logstash-OB.conf &
-          export PuppetmasterIP=${WSO2OB140PuppetMaster.PrivateIp}
+          export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
           service puppet restart
           sleep 300
@@ -905,7 +905,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9446/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node2AutoScalingGroup --region ${AWS::Region}
+                      /usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode2AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -916,7 +916,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9446/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node2AutoScalingGroup --region ${AWS::Region}
+                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode2AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -927,7 +927,7 @@ Resources:
                   sleep 10
                   wget --delete-after --server-response --no-check-certificate "https://localhost:9446/carbon/admin/login.jsp"
                   if [ $? -eq "0" ] ; then
-                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OB140Node2AutoScalingGroup --region ${AWS::Region}
+                      /usr/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBNode2AutoScalingGroup --region ${AWS::Region}
                       break
                   fi
               done
@@ -938,19 +938,19 @@ Resources:
     DependsOn:
       - WSO2OB140SecurityGroup
       - WSO2OB140LoadBalancer
-      - WSO2OB140VPCInternetGatewayAttachment
-      - WSO2OB140PuppetMaster
-  WSO2OB140Node2AutoScalingGroup:
+      - WSO2OBVPCInternetGatewayAttachment
+      - WSO2OBPuppetMaster
+  WSO2OBNode2AutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
-      LaunchConfigurationName: !Ref WSO2OB140Node2LaunchConfiguration
+      LaunchConfigurationName: !Ref WSO2OBNode2LaunchConfiguration
       DesiredCapacity: 1
       MinSize: 1
       MaxSize: 1
       TargetGroupARNs:
         - !Ref WSO2OB140KMALBTargetGroup
       VPCZoneIdentifier:
-        - !Ref WSO2OB140PrivateSubnet1
+        - !Ref WSO2OBPrivateSubnet1
       Tags:
         - Key: Name
           Value: !Sub "${AWS::StackName}-OBKM"
@@ -977,7 +977,7 @@ Resources:
       IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
-        - !Ref WSO2OB140PublicSubnet1
+        - !Ref WSO2OBPublicSubnet1
   WSO2OB140ALBTargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
@@ -993,7 +993,7 @@ Resources:
         Value: '20'
       UnhealthyThresholdCount: 2
       VpcId:
-        Ref: WSO2OB140VPC
+        Ref: WSO2OBVPC
       Tags:
       - Key: Name
         Value: ob
@@ -1012,7 +1012,7 @@ Resources:
         Value: '20'
       UnhealthyThresholdCount: 2
       VpcId:
-        Ref: WSO2OB140VPC
+        Ref: WSO2OBVPC
       Tags:
       - Key: Name
         Value: ob
@@ -1031,7 +1031,7 @@ Resources:
         Value: '20'
       UnhealthyThresholdCount: 2
       VpcId:
-        Ref: WSO2OB140VPC
+        Ref: WSO2OBVPC
       Tags:
       - Key: Name
         Value: ob
@@ -1050,11 +1050,11 @@ Resources:
         Value: '20'
       UnhealthyThresholdCount: 2
       VpcId:
-        Ref: WSO2OB140VPC
+        Ref: WSO2OBVPC
       Tags:
       - Key: Name
         Value: ob
-  WSO2OB140ALB443Listener:
+  WSO2OBALB443Listener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
@@ -1063,7 +1063,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OB140LoadBalancer
       Port: 443
       Protocol: TCP
-  WSO2OB140ALB9446Listener:
+  WSO2OBALB9446Listener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
@@ -1072,7 +1072,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OB140LoadBalancer
       Port: 9446
       Protocol: TCP
-  WSO2OB140ALB8243Listener:
+  WSO2OBALB8243Listener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
@@ -1081,7 +1081,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OB140LoadBalancer
       Port: 8243
       Protocol: TCP
-  WSO2OB140ALB9763Listener:
+  WSO2OBALB9763Listener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
@@ -1090,7 +1090,7 @@ Resources:
       LoadBalancerArn: !Ref WSO2OB140LoadBalancer
       Port: 9763
       Protocol: TCP
-  WSO2OB140ALB9443Listener:
+  WSO2OBALB9443Listener:
     Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
@@ -1196,7 +1196,7 @@ Outputs:
           - DNSName
     Description: OB KM Hostname
 Mappings:
-  WSO2OB140PuppetMasterRegionMap:
+  WSO2OBPuppetMasterRegionMap:
     ap-southeast-2:
        Ubuntu1804: ami-00a227c6757c5deab
     eu-west-1:
@@ -1209,7 +1209,7 @@ Mappings:
        Ubuntu1804: ami-0a508da7114cb907a
     us-west-2:
        Ubuntu1804: ami-09c2541d4cff5f4c8
-  WSO2OB140AMIRegionMap:
+  WSO2OBAMIRegionMap:
     ap-southeast-2:
       CentOS7: ami-0211f0ecd0e693937
       Ubuntu1804: ami-0fc37bfc486b80d6d

@@ -287,7 +287,7 @@ Resources:
     Properties:
       Domain: vpc
   # database configurations
-  WSO2OB140DBInstanceSecurityGroup:
+  WSO2OBDBInstanceSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -309,17 +309,17 @@ Resources:
           FromPort: '1433'
           ToPort: '1433'
           CidrIp: 0.0.0.0/0
-  WSO2OB140DBInstance:
+  WSO2OBDBInstance:
     Type: 'AWS::RDS::DBInstance'
     DeletionPolicy: Delete
     Properties:
       VPCSecurityGroups:
-        - !Ref WSO2OB140DBInstanceSecurityGroup
+        - !Ref WSO2OBDBInstanceSecurityGroup
       DBInstanceClass: !Ref DBInstanceType
       AllocatedStorage: !Ref DBAllocationStorage
       BackupRetentionPeriod: '0'
-      DBInstanceIdentifier: WSO2OB140DBInstance
-      DBName: !If [UseSQLServerDB, "", WSO2OB140DB]
+      DBInstanceIdentifier: WSO2OBDBInstance
+      DBName: !If [UseSQLServerDB, "", WSO2OBDB]
       LicenseModel: !If [UseLicensedVersion, license-included, !Ref 'AWS::NoValue']
       EngineVersion: !Select [1, !Split ["_", !FindInMap [ DBEngineMap, !Ref DB, DBEngine]]]
       Engine: !Select [0, !Split ["_", !FindInMap [ DBEngineMap, !Ref DB, DBEngine]]]
@@ -336,7 +336,7 @@ Resources:
         - !Ref WSO2OBPrivateSubnet1
         - !Ref WSO2OBPrivateSubnet2
 #   Product configurations
-  WSO2OB140BastionSecurityGroup:
+  WSO2OBBastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -346,7 +346,7 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-  WSO2OB140SecurityGroup:
+  WSO2OBSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -409,7 +409,7 @@ Resources:
           DeviceIndex: 0
           SubnetId: !Ref WSO2OBPublicSubnet1
           GroupSet:
-            - !Ref WSO2OB140BastionSecurityGroup
+            - !Ref WSO2OBBastionSecurityGroup
   WSO2OBPuppetMaster:
     Type: 'AWS::EC2::Instance'
     CreationPolicy:
@@ -441,7 +441,7 @@ Resources:
           DeviceIndex: 0
           SubnetId: !Ref WSO2OBPrivateSubnet1
           GroupSet:
-            - !Ref WSO2OB140PuppetMasterSecurityGroup
+            - !Ref WSO2OBPuppetMasterSecurityGroup
       UserData: !Base64
         'Fn::Join':
           - |+
@@ -500,7 +500,7 @@ Resources:
               - ''
               - - sed -i "s/CF_OBAM_HOSTNAME/
                 - !GetAtt
-                  - WSO2OB140LoadBalancer
+                  - WSO2OBLoadBalancer
                   - DNSName
                 - >-
                   /g"
@@ -509,7 +509,7 @@ Resources:
               - ''
               - - sed -i "s/CF_OBKM_HOSTNAME/
                 - !GetAtt
-                  - WSO2OB140LoadBalancer
+                  - WSO2OBLoadBalancer
                   - DNSName
                 - >-
                   /g"
@@ -533,7 +533,7 @@ Resources:
               - ''
               - - sed -i "s/CF_RDS_URL/
                 - !GetAtt
-                  - WSO2OB140DBInstance
+                  - WSO2OBDBInstance
                   - Endpoint.Address
                 - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
@@ -545,13 +545,13 @@ Resources:
               - ''
               - - export DB_HOSTNAME=
                 - !GetAtt
-                  - WSO2OB140DBInstance
+                  - WSO2OBDBInstance
                   - Endpoint.Address
             - !Join
               - ''
               - - export DB_PORT=
                 - !GetAtt
-                  - WSO2OB140DBInstance
+                  - WSO2OBDBInstance
                   - Endpoint.Port
             - !Join
               - ''
@@ -580,14 +580,14 @@ Resources:
               - ''
               - - sed -i "s/CF_DB_HOST/
                 - !GetAtt
-                  - WSO2OB140DBInstance
+                  - WSO2OBDBInstance
                   - Endpoint.Address
                 - /g" /usr/local/bin/provision_db_ob.sh
             - !Join
               - ''
               - - sed -i "s/CF_DB_PORT/
                 - !GetAtt
-                  - WSO2OB140DBInstance
+                  - WSO2OBDBInstance
                   - Endpoint.Port
                 - /g" /usr/local/bin/provision_db_ob.sh
             - !Join
@@ -606,7 +606,7 @@ Resources:
                 - !Ref ProductVersion
                 - /g" /usr/local/bin/provision_db_ob.sh
             - bash /usr/local/bin/provision_db_ob.sh
-  WSO2OB140PuppetMasterSecurityGroup:
+  WSO2OBPuppetMasterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -641,7 +641,7 @@ Resources:
             DeleteOnTermination: 'true'
       KeyName: !Ref KeyPairName
       SecurityGroups:
-        - !Ref WSO2OB140SecurityGroup
+        - !Ref WSO2OBSecurityGroup
       UserData: !Base64
         'Fn::Sub': |
           Content-Type: multipart/mixed; boundary="//"
@@ -763,8 +763,8 @@ Resources:
           echo 'export HISTTIMEFORMAT="%F %T "' >> /etc/profile.d/history.sh
           cat /dev/null > ~/.bash_history && history -c
     DependsOn:
-      - WSO2OB140SecurityGroup
-      - WSO2OB140LoadBalancer
+      - WSO2OBSecurityGroup
+      - WSO2OBLoadBalancer
       - WSO2OBVPCInternetGatewayAttachment
       - WSO2OBPuppetMaster
       - WSO2OBNode2AutoScalingGroup
@@ -776,9 +776,9 @@ Resources:
       MinSize: 1
       MaxSize: 1
       TargetGroupARNs:
-        - !Ref WSO2OB140ALBTargetGroup
-        - !Ref WSO2OB140ALB8243TargetGroup
-        - !Ref WSO2OB140KMALB9763TargetGroup
+        - !Ref WSO2OBALBTargetGroup
+        - !Ref WSO2OBALB8243TargetGroup
+        - !Ref WSO2OBKMALB9763TargetGroup
       VPCZoneIdentifier:
         - !Ref WSO2OBPrivateSubnet1
       Tags:
@@ -789,7 +789,7 @@ Resources:
           Value: ob
           PropagateAtLaunch: 'true'
     DependsOn:
-      - WSO2OB140LoadBalancer
+      - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####
   WSO2OBNode2LaunchConfiguration:
     Type: 'AWS::AutoScaling::LaunchConfiguration'
@@ -807,7 +807,7 @@ Resources:
             DeleteOnTermination: 'true'
       KeyName: !Ref KeyPairName
       SecurityGroups:
-        - !Ref WSO2OB140SecurityGroup
+        - !Ref WSO2OBSecurityGroup
       UserData: !Base64
         'Fn::Sub': |
           Content-Type: multipart/mixed; boundary="//"
@@ -924,8 +924,8 @@ Resources:
           echo 'export HISTTIMEFORMAT="%F %T "' >> /etc/profile.d/history.sh
           cat /dev/null > ~/.bash_history && history -c
     DependsOn:
-      - WSO2OB140SecurityGroup
-      - WSO2OB140LoadBalancer
+      - WSO2OBSecurityGroup
+      - WSO2OBLoadBalancer
       - WSO2OBVPCInternetGatewayAttachment
       - WSO2OBPuppetMaster
   WSO2OBNode2AutoScalingGroup:
@@ -936,7 +936,7 @@ Resources:
       MinSize: 1
       MaxSize: 1
       TargetGroupARNs:
-        - !Ref WSO2OB140KMALBTargetGroup
+        - !Ref WSO2OBKMALBTargetGroup
       VPCZoneIdentifier:
         - !Ref WSO2OBPrivateSubnet1
       Tags:
@@ -956,8 +956,8 @@ Resources:
           - AlarmNotification
         WaitOnResourceSignals: true
     DependsOn:
-      - WSO2OB140LoadBalancer
-  WSO2OB140LoadBalancer:
+      - WSO2OBLoadBalancer
+  WSO2OBLoadBalancer:
     Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
       Name: OB
@@ -966,7 +966,7 @@ Resources:
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
-  WSO2OB140ALBTargetGroup:
+  WSO2OBALBTargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
@@ -985,7 +985,7 @@ Resources:
       Tags:
       - Key: Name
         Value: ob
-  WSO2OB140KMALBTargetGroup:
+  WSO2OBKMALBTargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
@@ -1004,7 +1004,7 @@ Resources:
       Tags:
       - Key: Name
         Value: ob
-  WSO2OB140KMALB9763TargetGroup:
+  WSO2OBKMALB9763TargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
@@ -1023,7 +1023,7 @@ Resources:
       Tags:
       - Key: Name
         Value: ob
-  WSO2OB140ALB8243TargetGroup:
+  WSO2OBALB8243TargetGroup:
     Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
@@ -1047,8 +1047,8 @@ Resources:
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref WSO2OB140ALBTargetGroup
-      LoadBalancerArn: !Ref WSO2OB140LoadBalancer
+          TargetGroupArn: !Ref WSO2OBALBTargetGroup
+      LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
       Protocol: TCP
   WSO2OBALB9446Listener:
@@ -1056,8 +1056,8 @@ Resources:
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref WSO2OB140KMALBTargetGroup
-      LoadBalancerArn: !Ref WSO2OB140LoadBalancer
+          TargetGroupArn: !Ref WSO2OBKMALBTargetGroup
+      LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
       Protocol: TCP
   WSO2OBALB8243Listener:
@@ -1065,8 +1065,8 @@ Resources:
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref WSO2OB140ALB8243TargetGroup
-      LoadBalancerArn: !Ref WSO2OB140LoadBalancer
+          TargetGroupArn: !Ref WSO2OBALB8243TargetGroup
+      LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
       Protocol: TCP
   WSO2OBALB9763Listener:
@@ -1074,8 +1074,8 @@ Resources:
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref WSO2OB140KMALB9763TargetGroup
-      LoadBalancerArn: !Ref WSO2OB140LoadBalancer
+          TargetGroupArn: !Ref WSO2OBKMALB9763TargetGroup
+      LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9763
       Protocol: TCP
   WSO2OBALB9443Listener:
@@ -1083,8 +1083,8 @@ Resources:
     Properties:
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref WSO2OB140ALBTargetGroup
-      LoadBalancerArn: !Ref WSO2OB140LoadBalancer
+          TargetGroupArn: !Ref WSO2OBALBTargetGroup
+      LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
       Protocol: TCP
 Outputs:
@@ -1093,7 +1093,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9443/services/'
     Description: OB service carbon URL
@@ -1102,7 +1102,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9443/carbon'
     Description: OB service carbon URL
@@ -1111,7 +1111,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9443/publisher'
     Description: OB service publisher URL
@@ -1120,7 +1120,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9443/store'
     Description: OB service store URL
@@ -1129,7 +1129,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9443/admin'
     Description: OB service admin URL
@@ -1138,7 +1138,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9446/services/'
     Description: OB keymanager service admin URL
@@ -1147,7 +1147,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':9446/carbon/'
     Description: OB keymanager carbon URL
@@ -1156,7 +1156,7 @@ Outputs:
       - ''
       - - 'https://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':8243'
     Description: OB HTTPS Gateway endpoint
@@ -1165,7 +1165,7 @@ Outputs:
       - ''
       - - 'http://'
         - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
         - ':8280'
     Description: OB HTTP Gateway endpoint
@@ -1173,14 +1173,14 @@ Outputs:
     Value: !Join
       - ''
       - - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
     Description: OB APIM Hostname
   KmHostname:
     Value: !Join
       - ''
       - - !GetAtt
-          - WSO2OB140LoadBalancer
+          - WSO2OBLoadBalancer
           - DNSName
     Description: OB KM Hostname
 Mappings:

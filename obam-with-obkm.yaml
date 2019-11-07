@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  WSO2 Open Banking deployment
+  WSO2 Open Banking deployment 1.4.0
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
@@ -109,9 +109,9 @@ Parameters:
       - "CORRETTO_JDK8"
   ProductVersion:
     Type: String
-    Default: 1.3.0
+    Default: 1.4.0
     AllowedValues:
-      - 1.3.0
+      - 1.4.0
   WUMPassword:
     Type: String
     Default: ""
@@ -207,14 +207,6 @@ Resources:
       AvailabilityZone: !Select
         - '0'
         - !GetAZs ''
-#  WSO2OBPublicSubnet2:
-#      Type: 'AWS::EC2::Subnet'
-#      Properties:
-#        VpcId: !Ref WSO2OBVPC
-#        CidrBlock: 10.0.252.0/24
-#        AvailabilityZone: !Select
-#          - '1'
-#          - !GetAZs ''
   WSO2OBPublicInternetGateway:
     Type: 'AWS::EC2::InternetGateway'
   WSO2OBPublicRouteTable:
@@ -226,11 +218,6 @@ Resources:
     Properties:
       RouteTableId: !Ref WSO2OBPublicRouteTable
       SubnetId: !Ref WSO2OBPublicSubnet1
-#  WSO2OBPublicSubnet2RouteTableAssociation:
-#    Type: 'AWS::EC2::SubnetRouteTableAssociation'
-#    Properties:
-#      RouteTableId: !Ref WSO2OBPublicRouteTable
-#      SubnetId: !Ref WSO2OBPublicSubnet2
   WSO2OBPublicRoute:
     Type: 'AWS::EC2::Route'
     Properties:
@@ -286,16 +273,16 @@ Resources:
         - WSO2OBEIP
         - AllocationId
       SubnetId: !Ref WSO2OBPublicSubnet1
-  WSO2BastionEIPAssociation:
+  WSO2OBBastionEIPAssociation:
     Type: 'AWS::EC2::EIPAssociation'
     Properties:
-      AllocationId: !GetAtt WSO2BastionEIP.AllocationId
-      InstanceId: !Ref WSO2BastionInstance
+      AllocationId: !GetAtt WSO2OBBastionEIP.AllocationId
+      InstanceId: !Ref WSO2OBBastionInstance
   WSO2OBEIP:
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
-  WSO2BastionEIP:
+  WSO2OBBastionEIP:
     Type: 'AWS::EC2::EIP'
     Properties:
       Domain: vpc
@@ -349,7 +336,7 @@ Resources:
         - !Ref WSO2OBPrivateSubnet1
         - !Ref WSO2OBPrivateSubnet2
 #   Product configurations
-  BastionSecurityGroup:
+  WSO2OBBastionSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -373,7 +360,6 @@ Resources:
           FromPort: '8280'
           ToPort: '8280'
           CidrIp: 0.0.0.0/0
-#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '9763'
           ToPort: '9763'
@@ -390,12 +376,10 @@ Resources:
           FromPort: '8243'
           ToPort: '8243'
           CidrIp: 0.0.0.0/0
-#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '5672'
           ToPort: '5672'
           CidrIp: 0.0.0.0/0
-#          SourceSecurityGroupId: !Ref WSO2OBLoadBalancerSecurityGroup
         - IpProtocol: tcp
           FromPort: '8140'
           ToPort: '8140'
@@ -404,7 +388,7 @@ Resources:
           FromPort: '4000'
           ToPort: '4000'
           CidrIp: 0.0.0.0/0
-  WSO2BastionInstance:
+  WSO2OBBastionInstance:
     Type: 'AWS::EC2::Instance'
     Properties:
       DisableApiTermination: 'false'
@@ -418,15 +402,15 @@ Resources:
       Monitoring: 'false'
       Tags:
         - Key: Name
-          Value: WSO2BastionInstance
+          Value: WSO2OBBastionInstance
       NetworkInterfaces:
         - DeleteOnTermination: 'true'
           Description: Primary network interface
           DeviceIndex: 0
           SubnetId: !Ref WSO2OBPublicSubnet1
           GroupSet:
-            - !Ref BastionSecurityGroup
-  PuppetMaster:
+            - !Ref WSO2OBBastionSecurityGroup
+  WSO2OBPuppetMaster:
     Type: 'AWS::EC2::Instance'
     CreationPolicy:
       ResourceSignal:
@@ -436,7 +420,7 @@ Resources:
       DisableApiTermination: 'false'
       InstanceInitiatedShutdownBehavior: stop
       ImageId: !FindInMap
-        - WSO2PuppetMasterRegionMap
+        - WSO2OBPuppetMasterRegionMap
         - !Ref 'AWS::Region'
         - Ubuntu1804
       InstanceType: !Ref WSO2InstanceType
@@ -457,7 +441,7 @@ Resources:
           DeviceIndex: 0
           SubnetId: !Ref WSO2OBPrivateSubnet1
           GroupSet:
-            - !Ref PuppetMasterSecurityGroup
+            - !Ref WSO2OBPuppetMasterSecurityGroup
       UserData: !Base64
         'Fn::Join':
           - |+
@@ -511,22 +495,7 @@ Resources:
             - service puppetmaster restart
             - !Sub "/home/ubuntu/wso2-init.sh '${WUMUsername}' '${WUMPassword}' wso2-obam-${ProductVersion} ${InternalPrepareForTest}"
             - !Sub "/home/ubuntu/wso2-init.sh '${WUMUsername}' '${WUMPassword}' wso2-obkm-${ProductVersion} ${InternalPrepareForTest}"
-            - !Sub "/usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource PuppetMaster --region ${AWS::Region}"
-            - !Join
-              - ''
-              - - sed -i "s/access-key/
-                - !Ref AWSAccessKeyId
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/REGION_NAME/
-                - !Ref "AWS::Region"
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s^secretkey^
-                - !Ref AWSAccessKeySecret
-                - ^g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+            - !Sub "/usr/local/bin/cfn-signal -e $? --stack ${AWS::StackName} --resource WSO2OBPuppetMaster --region ${AWS::Region}"
             - !Join
               - ''
               - - sed -i "s/CF_OBAM_HOSTNAME/
@@ -535,7 +504,7 @@ Resources:
                   - DNSName
                 - >-
                   /g"
-                  /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+                  /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_OBKM_HOSTNAME/
@@ -544,103 +513,34 @@ Resources:
                   - DNSName
                 - >-
                   /g"
-                  /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_OBKM_HOSTNAME/
-                - !GetAtt
-                  - WSO2OBLoadBalancer
-                  - DNSName
-                - >-
-                  /g"
-                  /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_OBAM_HOSTNAME/
-                - !GetAtt
-                  - WSO2OBLoadBalancer
-                  - DNSName
-                - >-
-                  /g"
-                  /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
+                  /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_DB_USERNAME/
                 - !Ref DBUsername
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+                - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_DB_PASSWORD/
                 - !Ref DBPassword
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+                - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_DBMS/
                 - !Select [0, !Split ["_", !FindInMap [ DBEngineMap, !Ref DB, DBEngine]]]
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+                - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_RDS_URL/
                 - !GetAtt
                   - WSO2OBDBInstance
                   - Endpoint.Address
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
+                - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_DEPLOYED_SPEC/
                 - !Ref DeploymentSpec
-                - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_DEPLOYED_SPEC/
-                - !Ref DeploymentSpec
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/access-key/
-                - !Ref AWSAccessKeyId
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/REGION_NAME/
-                - !Ref "AWS::Region"
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s^secretkey^
-                - !Ref AWSAccessKeySecret
-                - ^g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_ELB_DNS_NAME/
-                - !GetAtt
-                  - WSO2OBLoadBalancer
-                  - DNSName
-                - >-
-                  /g"
-                  /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_DB_USERNAME/
-                - !Ref DBUsername
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_DB_PASSWORD/
-                - !Ref DBPassword
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_DBMS/
-                - !Select [0, !Split ["_", !FindInMap [ DBEngineMap, !Ref DB, DBEngine]]]
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
-            - !Join
-              - ''
-              - - sed -i "s/CF_RDS_URL/
-                - !GetAtt
-                  - WSO2OBDBInstance
-                  - Endpoint.Address
-                - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
+                - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - export DB_HOSTNAME=
@@ -665,12 +565,7 @@ Resources:
              - ''
              - - sed -i "s/JDK_TYPE/
                - !Ref JDK
-               - /g" /etc/puppet/code/environments/production/modules/obam${ProductVersion//.}/manifests/params.pp
-            - !Join
-             - ''
-             - - sed -i "s/JDK_TYPE/
-               - !Ref JDK
-               - /g" /etc/puppet/code/environments/production/modules/obkm${ProductVersion//.}/manifests/params.pp
+               - /g" /etc/puppet/code/environments/production/modules/ob_common/manifests/params.pp
             - !Join
               - ''
               - - sed -i "s/CF_DB_USERNAME/
@@ -708,10 +603,10 @@ Resources:
             - !Join
               - ''
               - - sed -i "s/CF_PRODUCT_VERSION/
-                - 1.3.0
+                - !Ref ProductVersion
                 - /g" /usr/local/bin/provision_db_ob.sh
             - bash /usr/local/bin/provision_db_ob.sh
-  PuppetMasterSecurityGroup:
+  WSO2OBPuppetMasterSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
     Properties:
       VpcId: !Ref WSO2OBVPC
@@ -812,11 +707,11 @@ Resources:
           sed -i "s/STACK_NAME/${AWS::StackName}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           sed -i "s/REGION_NAME/${ElasticSearchRegion}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           nohup /usr/lib/logstash-6.5.1/bin/logstash -f /usr/lib/logstash-6.5.1/logstash-OB.conf &
-          export PuppetmasterIP=${PuppetMaster.PrivateIp}
+          export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
           service puppet restart
           sleep 100
-          export FACTER_profile=obam130
+          export FACTER_profile=obam
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
               puppet agent -vt >> /var/log/puppetlog.log
           fi
@@ -826,9 +721,9 @@ Resources:
           if [[ ${OperatingSystem} == "SUSE12" ]]; then
               /opt/puppetlabs/puppet/bin/puppet agent -vt >> /var/log/puppetlog.log
           fi
-          wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/AM_client-truststore.jks' && mv -f AM_client-truststore.jks /usr/lib/wso2/wso2obam/1.3.0/wso2-obam-1.3.0/repository/resources/security/client-truststore.jks
+          wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/AM_client-truststore.jks' && mv -f AM_client-truststore.jks /mnt/obam/wso2-obam-${ProductVersion}/repository/resources/security/client-truststore.jks
           sleep 30
-          /usr/lib/wso2/wso2obam/1.3.0/wso2-obam-1.3.0/bin/wso2server.sh -Dsetup start
+          /mnt/obam/wso2-obam-${ProductVersion}/bin/wso2server.sh -Dsetup start
           ${CustomUserData}
           sleep 30
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
@@ -871,7 +766,7 @@ Resources:
       - WSO2OBSecurityGroup
       - WSO2OBLoadBalancer
       - WSO2OBVPCInternetGatewayAttachment
-      - PuppetMaster
+      - WSO2OBPuppetMaster
       - WSO2OBNode2AutoScalingGroup
   WSO2OBNode1AutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
@@ -888,23 +783,11 @@ Resources:
         - !Ref WSO2OBPrivateSubnet1
       Tags:
         - Key: Name
-          Value: !Sub "${AWS::StackName}-OBInstance1"
+          Value: !Sub "${AWS::StackName}-OBAM"
           PropagateAtLaunch: 'true'
         - Key: cluster
           Value: ob
           PropagateAtLaunch: 'true'
-#     CreationPolicy:
-#       ResourceSignal:
-#         Count: 1
-#         Timeout: PT30M
-#     UpdatePolicy:
-#       AutoScalingRollingUpdate:
-#         MaxBatchSize: '2'
-#         MinInstancesInService: '1'
-#         PauseTime: PT10M
-#         SuspendProcesses:
-#           - AlarmNotification
-#         WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####
@@ -985,11 +868,11 @@ Resources:
           sed -i "s/STACK_NAME/${AWS::StackName}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           sed -i "s/REGION_NAME/${ElasticSearchRegion}/g" /usr/lib/logstash-6.5.1/logstash-OB.conf
           nohup /usr/lib/logstash-6.5.1/bin/logstash -f /usr/lib/logstash-6.5.1/logstash-OB.conf &
-          export PuppetmasterIP=${PuppetMaster.PrivateIp}
+          export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
           service puppet restart
           sleep 300
-          export FACTER_profile=obkm130
+          export FACTER_profile=obkm
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
               puppet agent -vt >> /var/log/puppetlog.log
           fi
@@ -1000,8 +883,8 @@ Resources:
               /opt/puppetlabs/puppet/bin/puppet agent -vt >> /var/log/puppetlog.log
           fi
           sleep 30
-          wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/KM_client-truststore.jks' && mv -f KM_client-truststore.jks /usr/lib/wso2/wso2obkm/1.3.0/wso2-obkm-1.3.0/repository/resources/security/client-truststore.jks
-          /usr/lib/wso2/wso2obkm/1.3.0/wso2-obkm-1.3.0/bin/wso2server.sh -Dsetup start
+          wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/KM_client-truststore.jks' && mv -f KM_client-truststore.jks /mnt/obkm/wso2-obkm-${ProductVersion}/repository/resources/security/client-truststore.jks
+          /mnt/obkm/wso2-obkm-${ProductVersion}/bin/wso2server.sh -Dsetup start
           ${CustomUserData}
           sleep 30
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
@@ -1044,7 +927,7 @@ Resources:
       - WSO2OBSecurityGroup
       - WSO2OBLoadBalancer
       - WSO2OBVPCInternetGatewayAttachment
-      - PuppetMaster
+      - WSO2OBPuppetMaster
   WSO2OBNode2AutoScalingGroup:
     Type: 'AWS::AutoScaling::AutoScalingGroup'
     Properties:
@@ -1058,7 +941,7 @@ Resources:
         - !Ref WSO2OBPrivateSubnet1
       Tags:
         - Key: Name
-          Value: !Sub "${AWS::StackName}-OBInstance2"
+          Value: !Sub "${AWS::StackName}-OBKM"
           PropagateAtLaunch: 'true'
     CreationPolicy:
       ResourceSignal:
@@ -1074,71 +957,8 @@ Resources:
         WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
-  WSO2OBLoadBalancerSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      VpcId: !Ref WSO2OBVPC
-      GroupDescription: WSO2 OB ELB Security Group
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: '9763'
-          ToPort: '9763'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '9443'
-          ToPort: '9443'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '9446'
-          ToPort: '9446'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8243'
-          ToPort: '8243'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8280'
-          ToPort: '8280'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '4000'
-          ToPort: '4000'
-          CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
-        - IpProtocol: tcp
-          FromPort: '9763'
-          ToPort: '9763'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '9443'
-          ToPort: '9443'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '9446'
-          ToPort: '9446'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '443'
-          ToPort: '443'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8243'
-          ToPort: '8243'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '8280'
-          ToPort: '8280'
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: '4000'
-          ToPort: '4000'
-          CidrIp: 0.0.0.0/0
   WSO2OBLoadBalancer:
-    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
     Properties:
       Name: OB
       Type: network
@@ -1146,31 +966,19 @@ Resources:
       Scheme: internet-facing
       Subnets:
         - !Ref WSO2OBPublicSubnet1
-#        - !Ref WSO2OBPublicSubnet2
-#      LoadBalancerAttributes:
-#        - Key: load_balancing.cross_zone.enabled
-#          Value: 'true'
-#      SecurityGroups:
-#        - !Ref WSO2OBLoadBalancerSecurityGroup
   WSO2OBALBTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-#      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9443
-#      Matcher:
-#        HttpCode: 200
       Name: ob-carbon-9443
       Port: 9443
       Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1178,24 +986,18 @@ Resources:
       - Key: Name
         Value: ob
   WSO2OBKMALBTargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-#      HealthCheckPath: /carbon/admin/login.jsp
       HealthCheckPort: 9446
-#      Matcher:
-#        HttpCode: 200
       Name: ob-carbon-9446
       Port: 9446
       Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1203,24 +1005,18 @@ Resources:
       - Key: Name
         Value: ob
   WSO2OBKMALB9763TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-#      HealthCheckPath: /
       HealthCheckPort: 9763
-#      Matcher:
-#        HttpCode: 200
       Name: ob-carbon-9763
       Port: 9763
       Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1228,24 +1024,18 @@ Resources:
       - Key: Name
         Value: ob
   WSO2OBALB8243TargetGroup:
-    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
     Properties:
       HealthCheckIntervalSeconds: 10
       HealthCheckProtocol: TCP
-#      HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
-#      HealthCheckPath: /services/Version
       HealthCheckPort: 8243
-#      Matcher:
-#        HttpCode: 200
       Name: ob-carbon-8243
       Port: 8243
       Protocol: TCP
       TargetGroupAttributes:
       - Key: deregistration_delay.timeout_seconds
         Value: '20'
-#      - Key: stickiness.enabled
-#        Value: 'true'
       UnhealthyThresholdCount: 2
       VpcId:
         Ref: WSO2OBVPC
@@ -1253,7 +1043,7 @@ Resources:
       - Key: Name
         Value: ob
   WSO2OBALB443Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
         - Type: forward
@@ -1261,11 +1051,8 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 443
       Protocol: TCP
-#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9446Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
         - Type: forward
@@ -1273,11 +1060,8 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9446
       Protocol: TCP
-#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB8243Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
         - Type: forward
@@ -1285,11 +1069,8 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 8243
       Protocol: TCP
-#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9763Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
         - Type: forward
@@ -1297,10 +1078,8 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9763
       Protocol: TCP
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
   WSO2OBALB9443Listener:
-    Type: AWS::ElasticLoadBalancingV2::Listener
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
     Properties:
       DefaultActions:
         - Type: forward
@@ -1308,9 +1087,6 @@ Resources:
       LoadBalancerArn: !Ref WSO2OBLoadBalancer
       Port: 9443
       Protocol: TCP
-#      SslPolicy: ELBSecurityPolicy-TLS-1-1-2017-01
-#    DependsOn:
-#      - WSO2OBLoadBalancerSecurityGroup
 Outputs:
   CarbonServerUrl:
     Value: !Join
@@ -1319,7 +1095,7 @@ Outputs:
         - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
-        - '/services/'
+        - ':9443/services/'
     Description: OB service carbon URL
   MgtConsoleUrl:
     Value: !Join
@@ -1328,7 +1104,7 @@ Outputs:
         - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
-        - '/carbon'
+        - ':9443/carbon'
     Description: OB service carbon URL
   PublisherUrl:
     Value: !Join
@@ -1337,7 +1113,7 @@ Outputs:
         - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
-        - '/publisher'
+        - ':9443/publisher'
     Description: OB service publisher URL
   StoreUrl:
     Value: !Join
@@ -1346,7 +1122,7 @@ Outputs:
         - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
-        - '/store'
+        - ':9443/store'
     Description: OB service store URL
   AdminUrl:
     Value: !Join
@@ -1355,7 +1131,7 @@ Outputs:
         - !GetAtt
           - WSO2OBLoadBalancer
           - DNSName
-        - '/admin'
+        - ':9443/admin'
     Description: OB service admin URL
   KeyManagerUrl:
     Value: !Join
@@ -1408,7 +1184,7 @@ Outputs:
           - DNSName
     Description: OB KM Hostname
 Mappings:
-  WSO2PuppetMasterRegionMap:
+  WSO2OBPuppetMasterRegionMap:
     ap-southeast-2:
        Ubuntu1804: ami-00a227c6757c5deab
     eu-west-1:

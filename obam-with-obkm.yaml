@@ -412,10 +412,10 @@ Resources:
             - !Ref WSO2OBBastionSecurityGroup
   WSO2OBPuppetMaster:
     Type: 'AWS::EC2::Instance'
-#    CreationPolicy:
-#      ResourceSignal:
-#        Count: 1
-#        Timeout: PT30M
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
     Properties:
       DisableApiTermination: 'false'
       InstanceInitiatedShutdownBehavior: stop

@@ -943,10 +943,10 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-OBKM"
           PropagateAtLaunch: 'true'
-    CreationPolicy:
-      ResourceSignal:
-        Count: 1
-        Timeout: PT30M
+#    CreationPolicy:
+#      ResourceSignal:
+#        Count: 1
+#        Timeout: PT30M
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: '2'

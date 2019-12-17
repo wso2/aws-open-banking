@@ -870,14 +870,12 @@ Resources:
           nohup /usr/lib/logstash-6.5.1/bin/logstash -f /usr/lib/logstash-6.5.1/logstash-OB.conf &
           export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
-          echo "--restarting puppet master"
           service puppet restart
-          echo "--restarted puppet master"
+          echo "--puppet restarted--"
           sleep 300
           export FACTER_profile=obkm
-          echo "--${OperatingSystem}--"
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
-	      echo "--Ubuntu1804--"
+              echo "--puppet running for ubuntu--"
               puppet agent -vt
           fi
           if [[ ${OperatingSystem} == "CentOS7" ]]; then
@@ -887,7 +885,7 @@ Resources:
               /opt/puppetlabs/puppet/bin/puppet agent -vt >> /var/log/puppetlog.log
           fi
           sleep 30
-          echo "--puppet completed"
+          echo "--puppet completed--"
           wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/KM_client-truststore.jks' && mv -f KM_client-truststore.jks /mnt/obkm/wso2-obkm-${ProductVersion}/repository/resources/security/client-truststore.jks
           /mnt/obkm/wso2-obkm-${ProductVersion}/bin/wso2server.sh -Dsetup start
           ${CustomUserData}

@@ -412,10 +412,10 @@ Resources:
             - !Ref WSO2OBBastionSecurityGroup
   WSO2OBPuppetMaster:
     Type: 'AWS::EC2::Instance'
-#    CreationPolicy:
-#      ResourceSignal:
-#        Count: 1
-#        Timeout: PT30M
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
     Properties:
       DisableApiTermination: 'false'
       InstanceInitiatedShutdownBehavior: stop
@@ -788,6 +788,18 @@ Resources:
         - Key: cluster
           Value: ob
           PropagateAtLaunch: 'true'
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: '2'
+        MinInstancesInService: '1'
+        PauseTime: PT10M
+        SuspendProcesses:
+          - AlarmNotification
+        WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####
@@ -946,10 +958,10 @@ Resources:
         - Key: Name
           Value: !Sub "${AWS::StackName}-OBKM"
           PropagateAtLaunch: 'true'
-#    CreationPolicy:
-#      ResourceSignal:
-#        Count: 1
-#        Timeout: PT30M
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
     UpdatePolicy:
       AutoScalingRollingUpdate:
         MaxBatchSize: '2'
@@ -1193,7 +1205,7 @@ Mappings:
     eu-west-1:
        Ubuntu1804: ami-01ede9cf5682c13eb
     us-east-1:
-       Ubuntu1804: ami-000e5888523f85c78
+       Ubuntu1804: ami-07788ed3a363cbde9
     us-east-2:
        Ubuntu1804: ami-0032cc13f9a978562
     us-west-1:

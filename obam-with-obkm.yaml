@@ -788,6 +788,18 @@ Resources:
         - Key: cluster
           Value: ob
           PropagateAtLaunch: 'true'
+    CreationPolicy:
+      ResourceSignal:
+        Count: 1
+        Timeout: PT30M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MaxBatchSize: '2'
+        MinInstancesInService: '1'
+        PauseTime: PT10M
+        SuspendProcesses:
+          - AlarmNotification
+        WaitOnResourceSignals: true
     DependsOn:
       - WSO2OBLoadBalancer
 ##### KEY MANAGER NODE #####
@@ -871,10 +883,12 @@ Resources:
           export PuppetmasterIP=${WSO2OBPuppetMaster.PrivateIp}
           echo "$PuppetmasterIP puppet puppetmaster" >> /etc/hosts
           service puppet restart
+          echo "--puppet restarted--"
           sleep 300
           export FACTER_profile=obkm
           if [[ ${OperatingSystem} == "Ubuntu1804" ]]; then
-              puppet agent -vt >> /var/log/puppetlog.log
+              echo "--puppet running for ubuntu--"
+              puppet agent -vt
           fi
           if [[ ${OperatingSystem} == "CentOS7" ]]; then
               /opt/puppetlabs/bin/puppet agent -vt >> /var/log/puppetlog.log
@@ -883,6 +897,7 @@ Resources:
               /opt/puppetlabs/puppet/bin/puppet agent -vt >> /var/log/puppetlog.log
           fi
           sleep 30
+          echo "--puppet completed--"
           wget --no-check-certificate --no-proxy 'https://testgrid-resources.s3.amazonaws.com/ob-dep-resources/KM_client-truststore.jks' && mv -f KM_client-truststore.jks /mnt/obkm/wso2-obkm-${ProductVersion}/repository/resources/security/client-truststore.jks
           /mnt/obkm/wso2-obkm-${ProductVersion}/bin/wso2server.sh -Dsetup start
           ${CustomUserData}
@@ -1190,7 +1205,7 @@ Mappings:
     eu-west-1:
        Ubuntu1804: ami-01ede9cf5682c13eb
     us-east-1:
-       Ubuntu1804: ami-0b0c1747efd759f3e
+       Ubuntu1804: ami-07788ed3a363cbde9
     us-east-2:
        Ubuntu1804: ami-0032cc13f9a978562
     us-west-1:
